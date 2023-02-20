@@ -1,0 +1,29 @@
+{
+  "name": "mpu6050-pigpio-client",
+  "version": "1.0.0",
+  "description": "MPU6050 IMU Driver for Nodejs based on pigpio-client with i2c, dmp and calibration enabled",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/btsimonh/mpu6050-pigpio-client.git"
+  },
+  "keywords": [
+    "MPU6050",
+    "IMU",
+    "calibration",
+    "dmp",
+    "pigpio-client"
+  ],
+  "author": "Skimon Hailes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/btsimonh/mpu6050-pigpio-client/issues"
+  },
+  "homepage": "https://github.com/btsimonh/mpu6050-pigpio-client#readme",
+  "dependencies": {
+    "pigpio-client": "github:btsimonh/pigpio-client#Addmorei2c"
+  }
+}
