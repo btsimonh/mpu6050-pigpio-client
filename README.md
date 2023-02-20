@@ -55,3 +55,8 @@ The dmp provides quaterions which contain information to create yaw, pitch and r
 # Wiki
 
 See/edit the wiki for further technical information about the MPU6050.
+
+
+# PRs
+
+PRs welcome, especially for adding additional Invensense devices.
