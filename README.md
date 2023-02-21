@@ -4,9 +4,7 @@ MPU6050 IMU Driver for Nodejs based on pigpio-client with i2c, dmp and calibrati
 
 it uses a pigpio-client modified for i2c functions.
 
-pigpio allows the use of GPIO, I2C and other hardware functions of the RPi remotely or locally over sockets.
-
-pigpio style daemons exist for other platforms than the Raspberry Pi.
+pigpio allows the use of GPIO, I2C and other hardware functions of the RPi remotely or locally over sockets; pigpio style daemons exist for other platforms than the Raspberry Pi.
 
 ## Install
 
@@ -25,6 +23,18 @@ Basically, you need to create a pigpio instance.  Once it is connected, call the
 Once the MPU6050 is created, you can then call the functions to operate the MPU6050.
 
 NOTE: The majority of functions are async - since pigpio-client operates over network.  So every register set, etc. involves a network exchange.  If something is not working as expected, double check that all your calls have `await` in front of them! - that was my most common bug!
+
+## Caveats
+
+NodeJS is not 'real time', and all pigpio-client transactions are asynchronous over sockets.
+
+To keep *ALL* interactions with the i2c bus synchronous, use a single async function, and `await` every call.  If you forget one `await`, things will quickly become confused.
+
+pigpiod i2c packets are limited to 32 byte transfers - so reading 500 bytes from the fifo will involve 500/32=16 synchronous network transactions.  Don't expect this to work over WAN or flaky wifi.
+
+Having said that NodeJS is not real time, it's totally capable of handling many fifo packets per second, and if the rate is kept such that the fifo only need to be read once per 300ms or so, it totally fine.  There may be an occasional fifo overflow in adverse conditions, but it will recover.
+
+I developed this totally remotely from my RPi, with the intent of running it on the RPi using Node-Red.
 
 ## Calibration
 
@@ -120,6 +130,10 @@ I did not test external I2C reading from a device, although reading the data fro
 Don't ask for dmp features DMP_FEATURE_3X_QUAT and DMP_FEATURE_6X_QUAT at the same time.
 
 Don't ask for dmp features DMP_FEATURE_SEND_CAL_GYRO and DMP_FEATURE_SEND_RAW_GYRO at the same time. (some extra data arrives - not sure what).  The configuration fucntion could do with enforcing these to be exclusive.
+
+Beware calibration of Gyro.  The results are different in different orientations.  If interested in aspects of gyro calibration, or aspects of accelleration scale calibration, then run calibration at all 6 orientations, then run the example with 'csv', and examine the results.  For me, after a simple test, the factory scale calibration is within 1 LSB of correct.  You *can* change the scale fine tune registers (see .setHWscales() in MPU6050-calibrate.js).
+
+I did not re-implement factory test after abandoning the use of .get_st_biases() in favour of my own .get_avg_values() in MPU6050-calibrate.js.
 
 # Acknowledgments
 
